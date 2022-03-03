@@ -32,4 +32,4 @@ public:
 };
 
 } // namespace ExternalFootstepPlanner
-}
+} // namespace mc_plugin

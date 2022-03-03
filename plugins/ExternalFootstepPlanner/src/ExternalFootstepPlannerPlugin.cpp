@@ -37,7 +37,7 @@ void ExternalFootstepPlannerPlugin::init(mc_control::MCGlobalController & gc, co
   /* Tsuru add */
   if(config.has("default_target_type"))
   {
-    targetType_ = (std::string) config("default_target_type");
+    targetType_ = (std::string)config("default_target_type");
     mc_rtc::log::success("[{}] set target_type: {}", name(), targetType_);
   }
 
@@ -45,8 +45,9 @@ void ExternalFootstepPlannerPlugin::init(mc_control::MCGlobalController & gc, co
   ctl.datastore().make_call("ExternalFootstepPlanner::Activate", [this]() { activate(); });
   ctl.datastore().make_call("ExternalFootstepPlanner::Deactivate", [this]() { deactivate(); });
   // Do we need replanning?
-  ctl.datastore().make_call("ExternalFootstepPlanner::PlanningRequested",
-                            [this]() { return worldPositionTargetChanged_ || localPositionTargetChanged_; }); // joystick input uses "localPositionTargetChanged_"
+  ctl.datastore().make_call("ExternalFootstepPlanner::PlanningRequested", [this]() {
+    return worldPositionTargetChanged_ || localPositionTargetChanged_;
+  }); // joystick input uses "localPositionTargetChanged_"
   ctl.datastore().make_call("ExternalFootstepPlanner::WorldPositionTargetChanged",
                             [this]() { return worldPositionTargetChanged_; });
   ctl.datastore().make_call("ExternalFootstepPlanner::WorldPositionTarget",
@@ -65,8 +66,9 @@ void ExternalFootstepPlannerPlugin::init(mc_control::MCGlobalController & gc, co
   ctl.datastore().make_call("ExternalFootstepPlanner::SetLocalVelocityTarget",
                             [this](const SE2d & localVelocity) { setLocalVelocityTarget(localVelocity); });
   /* Tsuru add */
-  ctl.datastore().make_call("ExternalFootstepPlanner::SetJoystickVelocityTarget",
-                            [this](const sensor_msgs::Joy & joystickInput) { setJoystickVelocityTarget(joystickInput); });
+  ctl.datastore().make_call(
+      "ExternalFootstepPlanner::SetJoystickVelocityTarget",
+      [this](const sensor_msgs::Joy & joystickInput) { setJoystickVelocityTarget(joystickInput); });
 
   // Call this to request a new plan
   ctl.datastore().make_call("ExternalFootstepPlanner::RequestPlan", [this](const Request & request) {
@@ -326,7 +328,7 @@ void ExternalFootstepPlannerPlugin::joystickSubscribeThread()
   auto & nh = *mc_rtc::ROSBridge::get_node_handle();
   // Service to request generation of a footstep plan
   // XXX: calling it should cancel the previous ongoing request (this is not the case in OnlineFootstepPlanner)
-  
+
   ros::Subscriber ps4_sub =
       nh.subscribe<sensor_msgs::Joy>(joystick_topic_, 1, &ExternalFootstepPlannerPlugin::joystick_callback, this);
 
